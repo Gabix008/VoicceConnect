@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const app = express();
 const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1');
+const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
 const fs = require('fs');
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
@@ -26,7 +27,7 @@ app.post('/recognize', async (req,res) =>{
       cb(null, `${__dirname}/media`);
     },
     filename:function(req, file, cb){
-      cb(null,Date.now()+".flac");
+      cb(null,Date.now()+".mp3");
     },
   })
   const upload = multer({storage}).single("audio");
@@ -37,9 +38,12 @@ app.post('/recognize', async (req,res) =>{
     }else if(err){
       return res.status(500).send(err);
     }
+
+    const audioFilePath = `${__dirname}/media/${req.file.filename}`;// Constrói o caminho completo do arquivo de áudio
     const params ={
-      audio: `${__dirname}/${fs.createReadStream('media').path}/${req.file.filename}`,
-      contentType: 'audio/flac',
+      audio: fs.createReadStream(audioFilePath),
+      contentType: 'audio/mp3',
+      
     }
     console.log(params)
     
@@ -58,8 +62,14 @@ app.post('/recognize', async (req,res) =>{
         },
         serviceUrl: 'https://api.au-syd.language-translator.watson.cloud.ibm.com/instances/eb96f779-fff6-43b0-8e51-7ea40e468404',
     });
+
+    const textToSpeech = new TextToSpeechV1({
+      authenticator: new IamAuthenticator({
+        apikey: 'wH90xTrjnrjRP9oq5o04rUAtnTY07eFpitpiTJd9JOQ0',
+      }),
+      serviceUrl: 'https://api.au-syd.text-to-speech.watson.cloud.ibm.com/instances/ad461ac3-3425-4a9f-8fdb-52dbe73b7fbb',
+    })
       
-    
     speechToText.recognize(params)
       .then(response => {
         const translateParams = {
@@ -74,11 +84,14 @@ app.post('/recognize', async (req,res) =>{
             res.status(500).json(err);
             console.log('Erro:', err);
           });
+          
       })
       .catch(err => {
         res.status(500).json(err);
         console.log('Erro:', err);
       });
+
+
   })
 
  
