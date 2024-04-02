@@ -7,10 +7,9 @@ const { IamAuthenticator } = require('ibm-watson/auth');
 const fs = require('fs');
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
 
+//const upload = multer({ dest: 'uploads/' });
 const apiKey = '6rr5TGgpnEqOB4bRxeMNp1JZn9_bzR0GJhXBw5KG6rF1'
 const url= 'https://api.au-syd.speech-to-text.watson.cloud.ibm.com/instances/d55efdae-e29d-45cf-b729-fa2f3f38b8ca'
-
-//const upload = multer({ dest: 'uploads/' });
 
 const authenticator = new IamAuthenticator({apikey:apiKey});
 app.use(express.json())
@@ -40,16 +39,15 @@ app.post('/recognize', async (req,res) =>{
     }
 
     const audioFilePath = `${__dirname}/media/${req.file.filename}`;// Constrói o caminho completo do arquivo de áudio
+    console.log(audioFilePath)
     const params ={
       audio: fs.createReadStream(audioFilePath),
       contentType: 'audio/mp3',
-      
     }
-    console.log(params)
-    
+
     const speechToText = new SpeechToTextV1({
-        authenticator: authenticator,
-        serviceUrl: url,
+      authenticator: authenticator,
+      serviceUrl: url,
     })
   
     const languageTranslator = new LanguageTranslatorV3({
@@ -65,12 +63,13 @@ app.post('/recognize', async (req,res) =>{
 
     const textToSpeech = new TextToSpeechV1({
       authenticator: new IamAuthenticator({
-        apikey: 'wH90xTrjnrjRP9oq5o04rUAtnTY07eFpitpiTJd9JOQ0',
+      apikey: 'wH90xTrjnrjRP9oq5o04rUAtnTY07eFpitpiTJd9JOQ0',
       }),
       serviceUrl: 'https://api.au-syd.text-to-speech.watson.cloud.ibm.com/instances/ad461ac3-3425-4a9f-8fdb-52dbe73b7fbb',
-    })
-      
-    speechToText.recognize(params)
+    });
+  
+  
+  speechToText.recognize(params)
       .then(response => {
         const translateParams = {
           text: response.result.results[0].alternatives[0].transcript,
@@ -78,23 +77,24 @@ app.post('/recognize', async (req,res) =>{
         };
         languageTranslator.translate(translateParams)
           .then(response => {
-            res.status(200).json(response.result, null, 2);
+            const textToSpeechParams = {
+              text: response.result.translations[0].translation,
+              voice: 'pt-BR_IsabelaVoice', // Escolha a voz adequada
+              accept: 'audio/wav',
+            }
+            console.log(textToSpeechParams)
+            textToSpeech.synthesize(textToSpeechParams)
+              .then(audio => {
+                audio.result.pipe(fs.createWriteStream('texto.wav'));
+                
+              })
           })
-          .catch(err => {
-            res.status(500).json(err);
-            console.log('Erro:', err);
-          });
-          
-      })
+        })
       .catch(err => {
         res.status(500).json(err);
         console.log('Erro:', err);
       });
-
-
   })
-
- 
 });
 
 app.listen(5000);
