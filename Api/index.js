@@ -26,7 +26,7 @@ app.post('/recognize', async (req,res) =>{
       cb(null, `${__dirname}/media`);
     },
     filename:function(req, file, cb){
-      cb(null,Date.now()+".mp3");
+      cb(null,Date.now()+".flac");
     },
   })
   const upload = multer({storage}).single("audio");
@@ -42,7 +42,7 @@ app.post('/recognize', async (req,res) =>{
     console.log(audioFilePath)
     const params ={
       audio: fs.createReadStream(audioFilePath),
-      contentType: 'audio/mp3',
+      contentType: 'audio/flac',
     }
 
     const speechToText = new SpeechToTextV1({
@@ -67,7 +67,7 @@ app.post('/recognize', async (req,res) =>{
       }),
       serviceUrl: 'https://api.au-syd.text-to-speech.watson.cloud.ibm.com/instances/ad461ac3-3425-4a9f-8fdb-52dbe73b7fbb',
     });
-  
+  //flac
   
   speechToText.recognize(params)
       .then(response => {
@@ -85,8 +85,9 @@ app.post('/recognize', async (req,res) =>{
             console.log(textToSpeechParams)
             textToSpeech.synthesize(textToSpeechParams)
               .then(audio => {
-                audio.result.pipe(fs.createWriteStream('texto.wav'));
-                
+                const tempFile = `${__dirname}/mediaTemp/audio.wav`
+                audio.result.pipe(fs.createWriteStream(tempFile));
+                res.status(200).sendFile(tempFile)
               })
           })
         })
