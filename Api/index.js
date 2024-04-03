@@ -39,7 +39,6 @@ app.post('/recognize', async (req,res) =>{
     }
 
     const audioFilePath = `${__dirname}/media/${req.file.filename}`;// Constrói o caminho completo do arquivo de áudio
-    console.log(audioFilePath)
     const params ={
       audio: fs.createReadStream(audioFilePath),
       contentType: 'audio/flac',
@@ -82,12 +81,12 @@ app.post('/recognize', async (req,res) =>{
               voice: 'pt-BR_IsabelaVoice', // Escolha a voz adequada
               accept: 'audio/wav',
             }
-            console.log(textToSpeechParams)
             textToSpeech.synthesize(textToSpeechParams)
               .then(audio => {
                 const tempFile = `${__dirname}/mediaTemp/audio.wav`
                 audio.result.pipe(fs.createWriteStream(tempFile));
                 res.status(200).sendFile(tempFile)
+                console.log('O aúdio foi criado!')
               })
           })
         })
