@@ -18,3 +18,79 @@ body {
     background-color: #1a2a50;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
+#logo img {
+    width: 200px;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Estilo para o botão de seleção de arquivo */
+.fileLabel {
+    display: block;
+    width: 60%;
+    /* Reduzindo a largura para centralizar */
+    margin: 0 auto 10px auto;
+    /* Centralizando com margem automática */
+    padding: 10px;
+    background-color: #326bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+}
+
+.fileLabel:hover {
+    background-color: #264bb7;
+}
+
+/* Estilo para o botão de envio */
+#btnSubmit {
+    display: block;
+    width: 50%;
+    /* Tornando o botão menor */
+    padding: 8px;
+    /* Diminuindo o padding */
+    margin: 10px auto 0 auto;
+    /* Centralizando com margem automática */
+    background-color: #326bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    /* Diminuindo o tamanho da fonte */
+}
+
+#btnSubmit:hover {
+    background-color: #264bb7;
+}
+
+.highlightButton {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #ff5722;
+    /* Cor de destaque */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.highlightButton:hover {
+    background-color: #e64a19;
+}
