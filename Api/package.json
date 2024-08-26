@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^1.6.8",
     "express": "^4.19.2",
-    "ibm-watson": "^8.0.0",
+    "ibm-watson": "^9.1.0",
     "mic": "^2.1.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.0"

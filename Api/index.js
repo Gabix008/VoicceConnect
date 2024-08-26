@@ -42,12 +42,17 @@ app.post('/recognize', async (req, res) => {
     const params = {
       audio: fs.createReadStream(audioFilePath),
       contentType: 'audio/flac',
+      endOfPhraseSilenceTime: 20,
+      smartFormatting: true,
+
     }
 
     const speechToText = new SpeechToTextV1({
       authenticator: authenticator,
       serviceUrl: url,
+
     })
+
 
     const languageTranslator = new LanguageTranslatorV3({
       version: '2018-05-01',
@@ -73,6 +78,8 @@ app.post('/recognize', async (req, res) => {
           text: response.result.results[0].alternatives[0].transcript,
           modelId: 'en-pt',
         };
+        console.log(response.result.results[0].alternatives[0].transcript)
+
         languageTranslator.translate(translateParams)
           .then(response => {
             const textToSpeechParams = {
@@ -80,6 +87,7 @@ app.post('/recognize', async (req, res) => {
               voice: 'pt-BR_IsabelaVoice', // Escolha a voz adequada
               accept: 'audio/wav',
             }
+            // console.log(response.result.translations[0].translation)
             textToSpeech.synthesize(textToSpeechParams)
               .then(audio => {
                 const tempFile = `${__dirname}/mediaTemp/audio.wav`
