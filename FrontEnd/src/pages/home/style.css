@@ -1,8 +1,22 @@
+:root {
+    --primary-color: #326bff;
+    --primary-color-hover: #264bb7;
+    --secondary-color: #ff5722;
+    --secondary-color-hover: #e64a19;
+    --bg-color: #1a2a50;
+    --text-color: #ffffff;
+    --font-family: "Montserrat", sans-serif;
+    --border-radius: 5px;
+    --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    --max-width: 500px;
+    --padding: 20px;
+}
+
 body {
     margin: 0;
-    font-family: "Montserrat", sans-serif;
+    font-family: var(--font-family);
     background-color: #0d1a33;
-    color: #ffffff;
+    color: var(--text-color);
     text-align: center;
     height: 100vh;
     display: flex;
@@ -11,12 +25,12 @@ body {
 }
 
 .container {
-    max-width: 500px;
+    max-width: var(--max-width);
     width: 100%;
-    padding: 20px;
+    padding: var(--padding);
     border-radius: 10px;
-    background-color: #1a2a50;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: var(--bg-color);
+    box-shadow: var(--box-shadow);
 }
 
 #logo img {
@@ -25,72 +39,63 @@ body {
 }
 
 h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 p {
-    font-size: 16px;
-    margin-bottom: 20px;
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
 }
 
-/* Estilo para o botão de seleção de arquivo */
-.fileLabel {
+button {
     display: block;
     width: 60%;
-    /* Reduzindo a largura para centralizar */
-    margin: 0 auto 10px auto;
-    /* Centralizando com margem automática */
-    padding: 10px;
-    background-color: #326bff;
-    color: #ffffff;
+    margin: 10px auto;
+    padding: 0.75rem;
+    background-color: var(--primary-color);
+    color: var(--text-color);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     text-align: center;
+    transition: background-color 0.3s ease;
 }
 
-.fileLabel:hover {
-    background-color: #264bb7;
+button:hover {
+    background-color: var(--primary-color-hover);
 }
 
-/* Estilo para o botão de envio */
-#btnSubmit {
-    display: block;
-    width: 50%;
-    /* Tornando o botão menor */
-    padding: 8px;
-    /* Diminuindo o padding */
-    margin: 10px auto 0 auto;
-    /* Centralizando com margem automática */
-    background-color: #326bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    /* Diminuindo o tamanho da fonte */
+button:disabled {
+    background-color: #7a7a7a;
+    cursor: not-allowed;
 }
 
-#btnSubmit:hover {
-    background-color: #264bb7;
+.reRecordButton {
+    background-color: var(--secondary-color);
 }
 
-.highlightButton {
-    display: block;
+.reRecordButton:hover {
+    background-color: var(--secondary-color-hover);
+}
+
+audio {
+    margin-top: 10px;
     width: 100%;
-    padding: 12px;
-    background-color: #ff5722;
-    /* Cor de destaque */
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+    max-width: var(--max-width);
+}
+
+.audio-section {
     margin-top: 20px;
 }
 
-.highlightButton:hover {
-    background-color: #e64a19;
+.audio-section h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.recording {
+    border: 2px solid #ff0000;
 }

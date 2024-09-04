@@ -1,45 +1,57 @@
 import './style.css';
 import logo from '/src/assets/logovoiceconnectpng.png';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 function Home() {
   const [loading, setLoading] = useState(false);
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
-  const [selectedFileName, setSelectedFileName] = useState(''); // Novo estado para o nome do arquivo
+  const [showPlayButton, setShowPlayButton] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+  const [translatedAudioURL, setTranslatedAudioURL] = useState(null); // Para o áudio traduzido
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorder = useRef(null);
+  const recordedChunks = useRef([]);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFileName(file.name); // Armazena o nome do arquivo selecionado
-    }
+  const handleStartRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      mediaRecorder.current = new MediaRecorder(stream);
+      recordedChunks.current = [];
+
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.current.onstop = () => {
+        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setAudioURL(audioUrl);
+        setShowPlayButton(true);
+      };
+
+      mediaRecorder.current.start();
+      setIsRecording(true);
+    });
+  };
+
+  const handleStopRecording = () => {
+    mediaRecorder.current.stop();
+    setIsRecording(false);
   };
 
   const handleSubmit = () => {
     setLoading(true);
 
+    // Simulação de envio para tradução (troque pela lógica do backend)
     setTimeout(() => {
       setLoading(false);
-      setShowDownloadButton(true);
-    }, 2000); // Simulação de tempo de carregamento
+      setTranslatedAudioURL('path_to_translated_audio.wav'); // Trocar pelo URL do áudio traduzido
+    }, 2000);
   };
 
-  const handleDownload = () => {
-    // Obtém o nome do arquivo sem a extensão
-    const fileNameWithoutExtension = selectedFileName.split('.').slice(0, -1).join('.');
-    const extension = selectedFileName.split('.').pop(); // Obtém a extensão do arquivo
-    const translatedFileName = `${fileNameWithoutExtension}_TRADUÇÃO.${extension}`; // Novo nome do arquivo
-
-    // Simulação de download do arquivo
-    const link = document.createElement('a');
-    link.href = 'path_to_translated_file.mp3'; // Caminho do arquivo traduzido (atualize para o caminho real)
-    link.download = translatedFileName; // Define o novo nome para download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Redireciona para a página inicial
-    setShowDownloadButton(false);
-    setSelectedFileName(''); // Reseta o nome do arquivo após o download
+  const handleReRecord = () => {
+    setAudioURL(null);
+    setShowPlayButton(false);
   };
 
   return (
@@ -49,29 +61,44 @@ function Home() {
           <img src={logo} alt="VoiceConnect Logo" />
         </div>
         <h1>Bem Vindo ao VoiceConnect!</h1>
-        <p>Selecione o áudio para tradução</p>
-        
-        {/* Input para seleção do arquivo */}
-        <input 
-          type="file" 
-          accept=".mp3" 
-          id="audioFile" 
-          style={{ display: 'none' }} 
-          onChange={handleFileChange} // Adiciona o evento onChange
-        />
-        <label htmlFor="audioFile" className="fileLabel">Selecione o áudio</label>
+        <p>Grave o áudio para tradução</p>
 
-        {/* Exibe o nome do arquivo selecionado */}
-        {selectedFileName && <p>Arquivo selecionado: {selectedFileName}</p>}
+        {/* Botão de Gravação */}
+        <button
+          onClick={isRecording ? handleStopRecording : handleStartRecording}
+          className={`fileLabel ${isRecording ? 'recording' : ''}`}
+        >
+          {isRecording ? 'Parar Gravação' : 'Iniciar Gravação'}
+        </button>
 
-        <button id="btnSubmit" onClick={handleSubmit}>Enviar para tradução</button>
+        {/* Botão de Enviar para Tradução */}
+        <button id="btnSubmit" onClick={handleSubmit} disabled={!audioURL}>Enviar para tradução</button>
+
+        {/* Botão de Regravação */}
+        <button onClick={handleReRecord} className="highlightButton" disabled={!audioURL}>Regravar</button>
 
         {loading && <p>Carregando...</p>}
 
-        {showDownloadButton && (
-          <button className="highlightButton" onClick={handleDownload}>
-            Baixar Tradução
-          </button>
+        {/* Exibe o Áudio Gravado */}
+        {showPlayButton && (
+          <div className="audio-section">
+            <h3>Áudio Original</h3>
+            <audio controls>
+              <source src={audioURL} type="audio/wav" />
+              Seu navegador não suporta o elemento de áudio.
+            </audio>
+          </div>
+        )}
+
+        {/* Exibe o Áudio Traduzido */}
+        {translatedAudioURL && (
+          <div className="audio-section">
+            <h3>Áudio Traduzido:</h3>
+            <audio controls>
+              <source src={translatedAudioURL} type="audio/wav" />
+              Seu navegador não suporta o elemento de áudio.
+            </audio>
+          </div>
         )}
       </div>
     </>
