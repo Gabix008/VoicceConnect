@@ -6,13 +6,20 @@ const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
 const { IamAuthenticator } = require('ibm-watson/auth');
 const fs = require('fs');
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
-
+const cors = require('cors');
 //const upload = multer({ dest: 'uploads/' });
 const apiKey = '6rr5TGgpnEqOB4bRxeMNp1JZn9_bzR0GJhXBw5KG6rF1'
 const url = 'https://api.au-syd.speech-to-text.watson.cloud.ibm.com/instances/d55efdae-e29d-45cf-b729-fa2f3f38b8ca'
 
 const authenticator = new IamAuthenticator({ apikey: apiKey });
 app.use(express.json())
+
+// Solve CORS
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:5173'
+}))
+app.use(express.static('public'))
 
 app.use(
   express.urlencoded({
@@ -22,11 +29,12 @@ app.use(
 
 app.post('/recognize', async (req, res) => {
   const storage = multer.diskStorage({
+
     destination: function (req, file, cb) {
       cb(null, `${__dirname}/media`);
     },
     filename: function (req, file, cb) {
-      cb(null, Date.now() + ".flac");
+      cb(null, Date.now() + ".mp3");
     },
   })
   const upload = multer({ storage }).single("audio");
@@ -41,13 +49,18 @@ app.post('/recognize', async (req, res) => {
     const audioFilePath = `${__dirname}/media/${req.file.filename}`;// Constrói o caminho completo do arquivo de áudio
     const params = {
       audio: fs.createReadStream(audioFilePath),
-      contentType: 'audio/flac',
+      contentType: 'audio/mp3',
+      endOfPhraseSilenceTime: 20,
+      smartFormatting: true,
+
     }
 
     const speechToText = new SpeechToTextV1({
       authenticator: authenticator,
       serviceUrl: url,
+
     })
+
 
     const languageTranslator = new LanguageTranslatorV3({
       version: '2018-05-01',
@@ -73,18 +86,20 @@ app.post('/recognize', async (req, res) => {
           text: response.result.results[0].alternatives[0].transcript,
           modelId: 'en-pt',
         };
+
         languageTranslator.translate(translateParams)
           .then(response => {
             const textToSpeechParams = {
               text: response.result.translations[0].translation,
               voice: 'pt-BR_IsabelaVoice', // Escolha a voz adequada
-              accept: 'audio/wav',
+              accept: 'audio/mp3',
             }
+            // console.log(response.result.translations[0].translation)
             textToSpeech.synthesize(textToSpeechParams)
               .then(audio => {
-                const tempFile = `${__dirname}/mediaTemp/audio.wav`
+                const tempFile = `${__dirname}/public/audio.mp3`
                 audio.result.pipe(fs.createWriteStream(tempFile));
-                res.status(200).sendFile(tempFile)
+                res.status(200).send(tempFile)
                 console.log('O aúdio foi criado!')
               })
           })
