@@ -7,9 +7,28 @@ const { IamAuthenticator } = require('ibm-watson/auth');
 const fs = require('fs');
 const LanguageTranslatorV3 = require('ibm-watson/language-translator/v3');
 const cors = require('cors');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const ElevenLabs = require("elevenlabs-node");
+const deepl = require('deepl-node');
 //const upload = multer({ dest: 'uploads/' });
+
+//Credenciais Speech to text(IBM)
 const apiKey = '6rr5TGgpnEqOB4bRxeMNp1JZn9_bzR0GJhXBw5KG6rF1'
 const url = 'https://api.au-syd.speech-to-text.watson.cloud.ibm.com/instances/d55efdae-e29d-45cf-b729-fa2f3f38b8ca'
+
+//credenciais translate 
+const authKey = 'c15b640e-58ec-4f95-943d-ee60094fe650:fx';
+const translator = new deepl.Translator(authKey);
+
+//credenciais elevenLabs
+const voice = new ElevenLabs(
+  {
+    apiKey: "sk_756975d75518d69e6a31809785d0afba3fb6df3c54e63d6c",
+    voiceId: ""
+
+  }
+)
+
 
 const authenticator = new IamAuthenticator({ apikey: apiKey });
 app.use(express.json())
@@ -52,14 +71,13 @@ app.post('/recognize', async (req, res) => {
       contentType: 'audio/mp3',
       endOfPhraseSilenceTime: 20,
       smartFormatting: true,
-
     }
 
     const speechToText = new SpeechToTextV1({
       authenticator: authenticator,
       serviceUrl: url,
-
     })
+
 
 
     const languageTranslator = new LanguageTranslatorV3({
@@ -73,13 +91,6 @@ app.post('/recognize', async (req, res) => {
       serviceUrl: 'https://api.au-syd.language-translator.watson.cloud.ibm.com/instances/eb96f779-fff6-43b0-8e51-7ea40e468404',
     });
 
-    const textToSpeech = new TextToSpeechV1({
-      authenticator: new IamAuthenticator({
-        apikey: 'wH90xTrjnrjRP9oq5o04rUAtnTY07eFpitpiTJd9JOQ0',
-      }),
-      serviceUrl: 'https://api.au-syd.text-to-speech.watson.cloud.ibm.com/instances/ad461ac3-3425-4a9f-8fdb-52dbe73b7fbb',
-    });
-
     speechToText.recognize(params)
       .then(response => {
         const translateParams = {
@@ -88,20 +99,25 @@ app.post('/recognize', async (req, res) => {
         };
 
         languageTranslator.translate(translateParams)
-          .then(response => {
-            const textToSpeechParams = {
-              text: response.result.translations[0].translation,
-              voice: 'pt-BR_IsabelaVoice', // Escolha a voz adequada
-              accept: 'audio/mp3',
-            }
-            // console.log(response.result.translations[0].translation)
-            textToSpeech.synthesize(textToSpeechParams)
-              .then(audio => {
-                const tempFile = `${__dirname}/public/audio.mp3`
-                audio.result.pipe(fs.createWriteStream(tempFile));
-                res.status(200).send(tempFile)
-                console.log('O aúdio foi criado!')
-              })
+          .then(async (response) => {
+
+
+            const voiceResponse = voice.textToSpeechStream({
+              fileName: "audio.mp3",
+              textInput: response.result.translations[0].translation,
+              voiceId: 'QJd9SLe6MVCdF6DR0EAu',
+              stability: 0.54,
+              similarityBoost: 0.36,
+              modelId: "eleven_multilingual_v2",
+              responseType: "stream",
+              speakerBoost: true
+            }).then((audio) => {
+              const tempFile = `${__dirname}/public/audio.mp3`
+              audio.pipe(fs.createWriteStream(tempFile))
+              res.status(200).send(tempFile)
+              console.log('O aúdio foi criado!',)
+
+            });
           })
       })
       .catch(err => {
