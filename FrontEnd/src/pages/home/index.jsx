@@ -1,6 +1,7 @@
 import './style.css';
 import logo from '/src/assets/logovoiceconnectpng.png';
 import { useState, useRef } from 'react';
+import api from '../../services/api';
 
 function Home() {
   const [loading, setLoading] = useState(false);
