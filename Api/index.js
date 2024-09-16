@@ -117,10 +117,10 @@ app.post('/recognize', async (req, res) => {
                   speakerBoost: true
                 }).then((audio) => {
                   const tempFile = `${__dirname}/public/audio.mp3`
-                  audio.pipe(fs.createWriteStream(tempFile))
-                  res.status(200).send(tempFile)
-                  console.log('O aúdio foi criado!',)
-
+                  audio.pipe(fs.createWriteStream(tempFile)).on('finish', () => {
+                    res.status(200).json({ path: 'audio.mp3' });
+                    console.log('O aúdio foi criado completamente!');
+                  });
                 })
                   .catch(err => {
                     res.status(500).json(err);
@@ -138,7 +138,7 @@ app.post('/recognize', async (req, res) => {
         res.status(500).send('Erro ao converter o arquivo de áudio.');
       })
       .run();
-    console.log(req.file)
+    // console.log(req.file)
 
 
 
