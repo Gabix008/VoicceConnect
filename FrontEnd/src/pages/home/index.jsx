@@ -2,7 +2,7 @@ import './style.css';
 import logo from '/src/assets/logovoiceconnectpng.png';
 import { useState, useRef } from 'react';
 import api from '../../services/api';
-
+// import {createFFmpeg} from '@ffmpeg/ffmpeg';
 function Home() {
   const [loading, setLoading] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(false);
@@ -11,7 +11,8 @@ function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorder = useRef(null);
   const recordedChunks = useRef([]);
-
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
   const handleStartRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
       mediaRecorder.current = new MediaRecorder(stream);
@@ -24,16 +25,23 @@ function Home() {
       };
 
       mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/wav' });
+        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/mp3' });
         const audioUrl = URL.createObjectURL(audioBlob);
+        const file = new File([audioBlob], "audio.mp3", { type: 'audio/mp3' });
+
         setAudioURL(audioUrl);
+        setAudioFile(file);
         setShowPlayButton(true);
+        console.log(file);
       };
 
       mediaRecorder.current.start();
       setIsRecording(true);
     });
   };
+  
+
+
 
   const handleStopRecording = () => {
     mediaRecorder.current.stop();
@@ -42,11 +50,16 @@ function Home() {
 
   const handleSubmit = () => {
     setLoading(true);
-
-    // Simulação de envio para tradução (troque pela lógica do backend)
+    const formData = new FormData();
+    formData.append('audio', audioFile, 'audio.mp3');
+    
+    api.post('/recognize', formData,{headers: {'Content-Type': 'multipart/form-data'}})
+    .then((response) => {
+    console.log(response.data)  
+    })
     setTimeout(() => {
       setLoading(false);
-      setTranslatedAudioURL('path_to_translated_audio.wav'); // Trocar pelo URL do áudio traduzido
+      setTranslatedAudioURL('path_to_translated_audio.mp3'); // Trocar pelo URL do áudio traduzido
     }, 2000);
   };
 
@@ -85,7 +98,7 @@ function Home() {
           <div className="audio-section">
             <h3>Áudio Original</h3>
             <audio controls>
-              <source src={audioURL} type="audio/wav" />
+              <source src={audioURL} type="audio/mp3" />
               Seu navegador não suporta o elemento de áudio.
             </audio>
           </div>
@@ -96,7 +109,7 @@ function Home() {
           <div className="audio-section">
             <h3>Áudio Traduzido:</h3>
             <audio controls>
-              <source src={translatedAudioURL} type="audio/wav" />
+              <source src={translatedAudioURL} type="audio/mp3" />
               Seu navegador não suporta o elemento de áudio.
             </audio>
           </div>
