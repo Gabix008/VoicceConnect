@@ -99,3 +99,19 @@ audio {
 .recording {
     border: 2px solid #ff0000;
 }
+
+select {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+option {
+    cursor: pointer;
+}

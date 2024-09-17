@@ -15,7 +15,9 @@ function Home() {
   const [audioFile, setAudioFile] = useState(null);
   const [isSendFile, setIsSendFile] = useState(false);
   const [buttonVisible, setButtonVisible] = useState(true);
-
+  const [sourceLang, setSourceLang] = useState('en');
+  const [targetLang, setTargetLang] = useState('pt');
+ const [ChangedSelect, setChangedSelect] = useState(null);
   const handleStartRecording = () => {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
       mediaRecorder.current = new MediaRecorder(stream);
@@ -60,6 +62,8 @@ function Home() {
     setLoading(true);
     const formData = new FormData();
     formData.append('audio', audioFile, 'audio.mp3');
+    formData.append('sourceLang', sourceLang);
+    formData.append('targetLang', targetLang);
     
     api.post('/recognize', formData,{headers: {'Content-Type': 'multipart/form-data'}})
     .then(async(response) => {
@@ -88,6 +92,20 @@ function Home() {
     setShowPlayButton(false);
     setButtonVisible(true)
   };
+
+
+
+  const handleSourceLangChange = (e) => {
+    setSourceLang(e.target.value);
+    setChangedSelect('sourceLang');
+    console.log('Source language changed:', e.target.value);
+  };
+
+  const handleTargetLangChange = (e) => {
+    setTargetLang(e.target.value);
+    setChangedSelect('targetLang');
+    console.log('Target language changed:', e.target.value);
+  };
   
 
   return (
@@ -98,6 +116,16 @@ function Home() {
         </div>
         <h1>Bem Vindo ao VoiceConnect!</h1>
         <p>Grave o áudio para tradução</p>
+        <p>Selecione o idioma de origem e destino</p>
+        <select value={sourceLang} onChange={handleSourceLangChange}>
+            <option value="en">English</option>
+            <option value="pt">Portuguese</option>
+            {/* Adicione mais opções conforme necessário */}
+          </select>
+        <select defaultValue={targetLang} onChange={handleTargetLangChange}>
+          <option value="pt">Portuguese</option>
+          <option value="en">English</option>
+        </select>
 
         {/* Botão de Gravação */}
        

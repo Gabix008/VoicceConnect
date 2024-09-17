@@ -47,8 +47,15 @@ app.use(
     extended: true
   })
 )
+const modelMapping = {
+  'en': 'en-US_BroadbandModel',
+  'pt': 'pt-BR_BroadbandModel',
+  // Adicione mais mapeamentos conforme necessário
+};
 
 app.post('/recognize', async (req, res) => {
+
+  // console.log(modelId)
   const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
@@ -66,6 +73,17 @@ app.post('/recognize', async (req, res) => {
     } else if (err) {
       return res.status(500).send(err);
     }
+    console.log('Request body:', req.body);
+
+    // Verifique se o corpo da requisição está correto
+    const { sourceLang, targetLang } = req.body;
+    console.log('sourceLang:', sourceLang);
+    console.log('targetLang:', targetLang);
+    const modelId = `${sourceLang}-${targetLang}`;
+
+    const speechModel = modelMapping[sourceLang] || 'en-US_BroadbandModel';
+
+
 
     const audioFilePath = `${__dirname}/media/${req.file.filename}`;// Constrói o caminho completo do arquivo de áudio
     const convertedFilePath = `${__dirname}/media/${Date.now()}.wav`;
@@ -78,6 +96,7 @@ app.post('/recognize', async (req, res) => {
         const params = {
           audio: fs.createReadStream(convertedFilePath),
           contentType: 'audio/wav',
+          model: speechModel,
           endOfPhraseSilenceTime: 20,
           smartFormatting: true,
         }
@@ -95,13 +114,15 @@ app.post('/recognize', async (req, res) => {
           },
           serviceUrl: 'https://api.au-syd.language-translator.watson.cloud.ibm.com/instances/eb96f779-fff6-43b0-8e51-7ea40e468404',
         });
+
+
         speechToText.recognize(params)
           .then(response => {
             const translateParams = {
               text: response.result.results[0].alternatives[0].transcript,
-              modelId: 'en-pt',
+              modelId: modelId,
             };
-
+            console.log(response.result.results[0].alternatives[0].transcript)
             languageTranslator.translate(translateParams)
               .then(async (response) => {
 
@@ -121,6 +142,7 @@ app.post('/recognize', async (req, res) => {
                     res.status(200).json({ path: 'audio.mp3' });
                     console.log('O aúdio foi criado completamente!');
                   });
+
                 })
                   .catch(err => {
                     res.status(500).json(err);
