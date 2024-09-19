@@ -10,12 +10,13 @@
     --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     --max-width: 500px;
     --padding: 20px;
+    --gradient-bg: linear-gradient(135deg, #1a2a50, #326bff);
 }
 
 body {
     margin: 0;
     font-family: var(--font-family);
-    background-color: #0d1a33;
+    background: var(--gradient-bg);
     color: var(--text-color);
     text-align: center;
     height: 100vh;
@@ -23,6 +24,7 @@ body {
     justify-content: center;
     align-items: center;
 }
+
 
 .container {
     max-width: var(--max-width);
