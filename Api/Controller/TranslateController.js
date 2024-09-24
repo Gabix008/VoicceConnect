@@ -18,7 +18,6 @@ class TranslateController {
         const modelMapping = {
             'en': 'en-US_BroadbandModel',
             'pt': 'pt-BR_BroadbandModel',
-            // Adicione mais mapeamentos conforme necessário
         };
         const voice = new ElevenLabs(
             {
@@ -131,14 +130,6 @@ class TranslateController {
                     res.status(500).send('Erro ao converter o arquivo de áudio.');
                 })
                 .run();
-            // console.log(req.file)
-
-
-
-
-
-
-
         })
     }
 }
