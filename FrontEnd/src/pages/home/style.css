@@ -116,4 +116,5 @@ select {
 
 option {
     cursor: pointer;
+    background-color: red;
 }
