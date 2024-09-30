@@ -17,8 +17,7 @@ O VoiceConnect é uma aplicação desenvolvida para facilitar o processo de trad
 
 - React: Para o desenvolvimento do Front-End.
 - Node.js: No Back-End para gerenciar requisições.
-  APIs:
-- IBM Watson Speech-to-Text e Language Translator
+- APIs: IBM Watson Speech-to-Text e Language Translator
 - ElevenLabs Text-to-Speech
 - JavaScript: Linguagem base para desenvolvimento.
 
