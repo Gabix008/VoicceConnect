@@ -1,7 +1,11 @@
 :root {
+    /* Definindo variáveis para cores, fontes, sombras, etc., para facilitar a manutenção e reaproveitamento */
     --primary-color: #326bff;
+    /* Cor principal, usada em botões e destaques */
     --primary-color-hover: #264bb7;
+    /* Cor ao passar o mouse */
     --secondary-color: #ff5722;
+    /* Cor secundária, usada em botões alternativos */
     --secondary-color-hover: #e64a19;
     --bg-color: #1a2a50;
     --text-color: #ffffff;
@@ -11,6 +15,7 @@
     --max-width: 500px;
     --padding: 20px;
     --gradient-bg: linear-gradient(135deg, #1a2a50, #326bff);
+    /* Fundo com gradiente */
 }
 
 body {
@@ -21,12 +26,14 @@ body {
     text-align: center;
     height: 100vh;
     display: flex;
+    /* Layout centralizado verticalmente com flexbox */
     justify-content: center;
     align-items: center;
 }
 
 
 .container {
+    /* Container centralizado com borda arredondada e sombra */
     max-width: var(--max-width);
     width: 100%;
     padding: var(--padding);
@@ -51,6 +58,7 @@ p {
 }
 
 button {
+    /* Estilos dos botões, incluindo cores e transição ao passar o mouse */
     display: block;
     width: 60%;
     margin: 10px auto;
@@ -75,6 +83,7 @@ button:disabled {
 }
 
 .reRecordButton {
+    /* Botão alternativo com cor secundária */
     background-color: var(--secondary-color);
 }
 
@@ -99,6 +108,7 @@ audio {
 }
 
 .recording {
+    /* Indica que a gravação está ativa com borda vermelha */
     border: 2px solid #ff0000;
 }
 

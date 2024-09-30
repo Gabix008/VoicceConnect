@@ -6,8 +6,11 @@ body {
   text-align: center;
   height: 100vh;
   display: flex;
+  /* Centraliza o conteúdo usando Flexbox */
   justify-content: center;
+  /* Alinha o conteúdo horizontalmente */
   align-items: center;
+  /* Alinha o conteúdo verticalmente */
 }
 
 .container {
@@ -16,6 +19,9 @@ body {
   padding: 20px;
   border-radius: 10px;
   background: linear-gradient(135deg, #2a3d67, #1e325a);
+  /* Aplica um gradiente elegante de azul no fundo */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  /* Adiciona uma sombra suave ao redor para profundidade */
   transition: background-color 0.3s ease-in-out;
+  /* Cria uma animação suave ao alterar a cor de fundo */
 }
