@@ -18,3 +18,24 @@ APIs:
 * IBM Watson Speech-to-Text e Language Translator
 * ElevenLabs Text-to-Speech
 * JavaScript: Linguagem base para desenvolvimento.
+
+## Antes de começar
+Certifique-se de que o **Node.js** está instalado em sua máquina. 
+
+### Passos para rodar o projeto:
+
+1. Clone o repositório do Git:
+   ```bash
+   git clone [link-do-repositório]
+
+2. Instale todas as dependencias do projeto 
+    npm install
+   
+## Iniciando o projeto 
+
+Entre na pasta back-end e utilize o comando: npm start
+
+Entre na pasta do front-end e utilize o comando:  npm run dev
+
+Agora, com o back-end e o front-end rodando simultaneamente, você pode acessar a aplicação.
+
