@@ -59,7 +59,7 @@ class TranslateController {
             const speechModel = modelMapping[sourceLang] || 'en-US_BroadbandModel'; //Seleciona o modelo de fala correspondente ao que foi passado na requisição
 
 
-            // Constrói os caminhos dos arquivos de áudio
+            // Construi os caminhos dos arquivos de áudio
             const audioFilePath = `${__dirname}/../media/${req.file.filename}`;
             const convertedFilePath = `${__dirname}/../media/${Date.now()}.wav`;
 
@@ -75,7 +75,7 @@ class TranslateController {
                         contentType: 'audio/wav',
                         model: speechModel,
                         endOfPhraseSilenceTime: 20,// Tempo de silêncio ao final das frases
-                        smartFormatting: true,// Ativa formatação inteligente
+                        smartFormatting: true,// Formatação inteligente
                     }
                     // Inicializa a API de Speech to Text
                     const speechToText = new SpeechToTextV1({
