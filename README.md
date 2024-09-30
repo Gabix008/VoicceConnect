@@ -65,9 +65,9 @@ Agora, você poderá usar a aplicação!
 ## 👨‍💻 Contribuidores
 
 <table>
-  <tr>
-    <img style="border-radius: 50%;" src="./Api/assets/Gabrielly.jpeg" width="100px;" alt=""/><br /><sub><b>Gabrielly Santana</b></sub></a><br />
-    <img style="border-radius: 50%;" src="./Api/assets/Oscar.jpeg" width="100px;" alt=""/><br /><sub><b>Oscar Júnior</b></sub></a><br /><a 
+    <td align="center"><img style="border-radius: 50%;" src="./Api/assets/Gabrielly.jpeg" width="100px;" alt=""/><br /><sub><b>Gabrielly Santana</b></sub></a><br /><a href="https://cubos.academy/" title="Cubos Academy">👨‍💻</a></td>
+    <td align="center"><img style="border-radius: 50%;" src="./Api/assets/Oscar.jpeg" width="100px;" alt=""/><br /><sub><b>Oscar Silva</b></sub></a><br /><a href="https://cubos.academy/" title="Cubos Academy">👨‍💻</a></td>
+	
     
     
   </tr>
