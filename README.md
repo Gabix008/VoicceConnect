@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="Cubos Academy" title="#CubosAcademy" src="assets/Capa GItHub.png" />
+    <img alt="Cubos Academy" title="#CubosAcademy" src="Api/assets/app.png" />
 </h1>
 
 # Voice Connect - Tradução de Áudio
