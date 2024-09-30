@@ -101,7 +101,7 @@ class TranslateController {
                                 text: response.result.results[0].alternatives[0].transcript,
                                 modelId: modelId,
                             };
-                            console.log(response.result.results[0].alternatives[0].transcript)
+
                             languageTranslator.translate(translateParams)
                                 .then(async (response) => {
 
