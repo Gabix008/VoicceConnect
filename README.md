@@ -50,4 +50,9 @@ Com ambos os serviços rodando, abra o navegador e acesse o endereço do front-e
 
 Agora, você poderá usar a aplicação!
 
+---
+
+## 👨‍💻 Contribuidores
+
+
 
