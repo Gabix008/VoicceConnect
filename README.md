@@ -1,3 +1,6 @@
+<h1 align="center">
+    <img alt="Cubos Academy" title="#CubosAcademy" src="assets/Capa GItHub.png" />
+</h1>
 
 # Voice Connect - Tradução de Áudio
 
@@ -34,10 +37,15 @@ Certifique-se de que o **Node.js** está instalado em sua máquina.
    
 ## Iniciando o projeto 
 
-Entre na pasta back-end e utilize o comando: **npm start**
+Entre na pasta back-end e utilize o comando:
+```bash
+ npm start
+```
 
-Entre na pasta do front-end e utilize o comando:  **npm run dev**
-
+Entre na pasta do front-end e utilize o comando: 
+```bash
+ npm run dev
+```
 Com ambos os serviços rodando, abra o navegador e acesse o endereço do front-end: http://localhost:5173.
 
 Agora, você poderá usar a aplicação!
