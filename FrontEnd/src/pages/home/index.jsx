@@ -1,78 +1,81 @@
+// Realiza os imports para o código
 import './style.css';
 import logo from '/src/assets/logovoiceconnectpng.png';
-import { useState, useRef, useEffect } from 'react'; // Importa hooks fundamentais do React, como useState (gerenciamento de estado) e useRef (referências persistentes).
+import { useState, useRef, useEffect } from 'react';
 import api from '../../services/api';
 // import {createFFmpeg} from '@ffmpeg/ffmpeg';
+// Define o componente Home
 function Home() {
-  const [loading, setLoading] = useState(false); // Estado que gerencia se a aplicação está carregando.
-  const [showPlayButton, setShowPlayButton] = useState(false);
-  const [audioURL, setAudioURL] = useState(null);
+  // Define estados usando useState
+  const [loading, setLoading] = useState(false); // Estado de carregamento
+  const [showPlayButton, setShowPlayButton] = useState(false); // Controla a visibilidade do botão de reprodução
+  const [audioURL, setAudioURL] = useState(null); // URL do áudio gravado
   const [translatedAudioURL, setTranslatedAudioURL] = useState(null); // Para o áudio traduzido
-  const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorder = useRef(null);
-  const recordedChunks = useRef([]);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [audioFile, setAudioFile] = useState(null);
-  const [isSendFile, setIsSendFile] = useState(false);
-  const [buttonVisible, setButtonVisible] = useState(true);
-  const [sourceLang, setSourceLang] = useState('en');
-  const [targetLang, setTargetLang] = useState('pt');
-  const [ChangedSelect, setChangedSelect] = useState(null);
-  const handleStartRecording = () => { // Função que lida com o início da gravação de áudio. Usa a API de mídia do navegador para capturar o áudio.
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      mediaRecorder.current = new MediaRecorder(stream);
-      recordedChunks.current = [];
+  const [isRecording, setIsRecording] = useState(false); // Indica se está gravando
+  const mediaRecorder = useRef(null); // Referência para o MediaRecorder
+  const recordedChunks = useRef([]); // Armazena os pedaços gravados de áudio
+  const [audioBlob, setAudioBlob] = useState(null); // Blob do áudio gravado
+  const [audioFile, setAudioFile] = useState(null); // Arquivo de áudio para envio
+  const [isSendFile, setIsSendFile] = useState(false); // Indica se o arquivo foi enviado
+  const [buttonVisible, setButtonVisible] = useState(true); // Controla a visibilidade do botão de gravação
+  const [sourceLang, setSourceLang] = useState('en'); // Idioma en
+  const [targetLang, setTargetLang] = useState('pt'); // idioma ptbr
+  const [ChangedSelect, setChangedSelect] = useState(null); // Controla qual seletor foi mudado
 
-      mediaRecorder.current.ondataavailable = (event) => { // Captura os pedaços de áudio gravados e armazena em um array.
+  // Função para iniciar a gravação
+  const handleStartRecording = () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => { // Solicita acesso ao microfone
+      mediaRecorder.current = new MediaRecorder(stream); // Cria uma nova instância do MediaRecorder
+      recordedChunks.current = []; // Reseta os pedaços gravados
+
+      // Evento quando há dados disponíveis
+      mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          recordedChunks.current.push(event.data);
+          recordedChunks.current.push(event.data); // Adiciona os dados ao array
         }
       };
 
-
+      // Evento quando a gravação para
       mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/mp3' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const file = new File([audioBlob], "audio.mp3", { type: 'audio/mp3' });
+        const audioBlob = new Blob(recordedChunks.current, { type: 'audio/mp3' }); // Cria um Blob do áudio gravado
+        const audioUrl = URL.createObjectURL(audioBlob); // Cria uma URL para o Blob
+        const file = new File([audioBlob], "audio.mp3", { type: 'audio/mp3' }); // Cria um arquivo a partir do Blob
 
-        setAudioURL(audioUrl);
-        setAudioFile(file);
-        setShowPlayButton(true);
-        console.log(file);
+        setAudioURL(audioUrl); // Atualiza o estado com a URL do áudio
+        setAudioFile(file); // Atualiza o estado com o arquivo de áudio
+        setShowPlayButton(true); // Mostra o botão de reprodução
+        console.log(file); // Loga o arquivo no console
       };
 
-      mediaRecorder.current.start();
-      setIsRecording(true);
-      setButtonVisible(true)
+      mediaRecorder.current.start(); // Inicia a gravação
+      setIsRecording(true); // Atualiza o estado para gravando
+      setButtonVisible(true) // Torna o botão visível
     });
   };
 
-
-
-
+  // Função para parar a gravação
   const handleStopRecording = () => {
-    mediaRecorder.current.stop();
-    setIsRecording(false);
-    setButtonVisible(false)
-
+    mediaRecorder.current.stop(); // Para a gravação
+    setIsRecording(false); // Atualiza o estado para não gravando
+    setButtonVisible(false) // Torna o botão invisível
   };
 
+  // Função para enviar o áudio para tradução
+  const handleSubmit = () => {
+    setLoading(true); // Ativa o estado de carregamento
+    const formData = new FormData(); // Cria um FormData para enviar os dados
+    formData.append('audio', audioFile, 'audio.mp3'); // Adiciona o arquivo de áudio
+    formData.append('sourceLang', sourceLang); // Adiciona o idioma de origem
+    formData.append('targetLang', targetLang); // Adiciona o idioma de destino
 
-  const handleSubmit = () => { // Função que envia o arquivo de áudio para a API usando FormData.
-    setLoading(true);
-    const formData = new FormData();
-    formData.append('audio', audioFile, 'audio.mp3');
-    formData.append('sourceLang', sourceLang);
-    formData.append('targetLang', targetLang);
-
-    api.post('/recognize', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    api.post('/recognize', formData, { headers: { 'Content-Type': 'multipart/form-data' } }) // Envia a requisição para a API
       .then(async (response) => {
-        if (response.data && response.data.path) {
-          console.log('Resposta da API:', response);
-          console.log('Dados da API:', response.data.path);
-          setTranslatedAudioURL(`http://localhost:5000/${response.data.path}?t=${new Date().getTime()}`); // Atualiza o estado com a URL do áudio traduzido retornado pela API.
-          console.log(translatedAudioURL)
-          setIsSendFile(true)
+        if (response.data && response.data.path) { // Verifica a resposta da API
+          console.log('Resposta da API:', response); // Loga a resposta da API
+          console.log('Dados da API:', response.data.path); // Loga o caminho dos dados da API
+          setTranslatedAudioURL(`http://localhost:5000/${response.data.path}?t=${new Date().getTime()}`); // Define a URL do áudio traduzido
+          console.log(translatedAudioURL) // Loga a URL do áudio traduzido
+          setIsSendFile(true) // Indica que o arquivo foi enviado
         }
       })
 
@@ -85,26 +88,27 @@ function Home() {
 
   };
 
+  // Função para regravar
   const handleReRecord = () => {
-    setIsSendFile(false);
-    setAudioURL(null);
-    setTranslatedAudioURL(null);
-    setShowPlayButton(false);
-    setButtonVisible(true)
+    setIsSendFile(false); // Reseta o estado de envio
+    setAudioURL(null); // Reseta a URL do áudio
+    setTranslatedAudioURL(null); // Reseta a URL do áudio traduzido
+    setShowPlayButton(false); // Esconde o botão de reprodução
+    setButtonVisible(true) // Torna o botão de gravação visível
   };
 
-
-
+  // Função para lidar com a mudança do idioma de origem
   const handleSourceLangChange = (e) => {
-    setSourceLang(e.target.value);
-    setChangedSelect('sourceLang');
-    console.log('Source language changed:', e.target.value);
+    setSourceLang(e.target.value); // Atualiza o idioma de origem
+    setChangedSelect('sourceLang'); // Indica que o idioma de origem foi alterado
+    console.log('Source language changed:', e.target.value); // Loga a mudança
   };
 
+  // Função para lidar com a mudança do idioma de destino
   const handleTargetLangChange = (e) => {
-    setTargetLang(e.target.value);
-    setChangedSelect('targetLang');
-    console.log('Target language changed:', e.target.value);
+    setTargetLang(e.target.value); // Atualiza o idioma de destino
+    setChangedSelect('targetLang'); // Indica que o idioma de destino foi alterado
+    console.log('Target language changed:', e.target.value); // Loga a mudança
   };
 
 
@@ -138,7 +142,7 @@ function Home() {
         </button>
         {/* Botão de Enviar para Tradução */}
 
-        <button id="btnSubmit" onClick={handleSubmit} disabled={!audioURL} style={isSendFile ? { display: 'none' } : {}} >Enviar para tradução </button> // Botão para enviar o áudio gravado para tradução, desativado se nenhum áudio for carregado.
+        <button id="btnSubmit" onClick={handleSubmit} disabled={!audioURL} style={isSendFile ? { display: 'none' } : {}} >Enviar para tradução </button>
 
         {/* Botão de Regravação */}
         <button onClick={handleReRecord} className="highlightButton" disabled={!audioURL}>Regravar</button>
