@@ -29,13 +29,17 @@ Certifique-se de que o **Node.js** está instalado em sua máquina.
    git clone [link-do-repositório]
 
 2. Instale todas as dependencias do projeto 
-    npm install
+   ```bash 
+   npm install
    
 ## Iniciando o projeto 
 
-Entre na pasta back-end e utilize o comando: npm start
+Entre na pasta back-end e utilize o comando: **npm start**
 
-Entre na pasta do front-end e utilize o comando:  npm run dev
+Entre na pasta do front-end e utilize o comando:  **npm run dev**
 
-Agora, com o back-end e o front-end rodando simultaneamente, você pode acessar a aplicação.
+Com ambos os serviços rodando, abra o navegador e acesse o endereço do front-end: http://localhost:5173.
+
+Agora, você poderá usar a aplicação!
+
 
