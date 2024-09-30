@@ -31,7 +31,7 @@ Certifique-se de que o **Node.js** está instalado em sua máquina.
 1. Clone o repositório do Git:
 
    ```bash
-   git clone [link-do-repositório]
+   https://github.com/[seu usuario]/VoicceConnect.git
 
    ```
 
