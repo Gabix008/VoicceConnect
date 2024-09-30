@@ -42,6 +42,10 @@ Certifique-se de que o **Node.js** está instalado em sua máquina.
 
    ```
 
+## Configurações para Windows
+
+Se estiver utilizando o Windows, você precisará configurar as variáveis de ambiente para o **FFmpeg**. 
+
 ## Iniciando o projeto
 
 Entre na pasta back-end e utilize o comando:
